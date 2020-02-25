@@ -14,7 +14,7 @@ rodDiam=8;
 
 TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam);
 
-module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam=8) {
+module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc=0.1, rodDiam=8) {
     MainTube(2*overlap + 5, internalDiameter, wallThicknes, overlap, tlrnc);
     translate([0, internalDiameter/2 +wallThicknes, overlap])
         RodGuider(rodDiam, perimeter, tlrnc);
@@ -34,5 +34,4 @@ module RodGuider(rodDiam, perimeter, tlrnc) {
         cylinder(h=h, d=rodDiam);
         translate([-rodDiam,-rodDiam/2,0]) rotate([-45,0,0]) cube([2*rodDiam,rodDiam,2*rodDiam]);
     }
-
 }
