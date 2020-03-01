@@ -2,13 +2,10 @@ use <components/Fittings.scad>
 
 /// coments
 //params
+include <Settings.scad>
 
-$fn=100;
-tlrnc=0.1;
-overlap=15;
-internalDiameter=27;
-perimeter = 0.4;
-wallThicknes = 3* perimeter;
+curveSteps=$fn >100 ? 100 : $fn;
+
 length=72;
 holderBarLength = 3*internalDiameter/5;
 holderBarDiameter=5;
@@ -44,52 +41,57 @@ Tangent	2/3
 **/
 C=1/3;
 
-NoseCone(length, internalDiameter);
+NoseCone(length, internalDiameter, true);
 
-module NoseCone(l, internalDiameter) {
+module NoseCone(l, internalDiameter, noBar = false) {
     translate([0,0,overlap])  {
         cone(l,(internalDiameter+2*wallThicknes)/2);
     }
-    holderBar(overlap,internalDiameter,wallThicknes,holderBarLength,holderBarDiameter);
+    if (!noBar) {
+        holderBar(overlap, internalDiameter, wallThicknes,holderBarLength, holderBarDiameter, tlrnc);
+    }
     fitting(overlap, internalDiameter, wallThicknes, tlrnc);
 }
 
-module holderBar(overlap,internalDiameter,wallThicknes,holderBarLength,holderBarDiameter,tlrnc=0.1) {
+module holderBar(overlap, internalDiameter, wallThicknes,holderBarLength, holderBarDiameter, tlrnc=0.1) {
     difference() {
         cylinder(h = overlap, d = internalDiameter);
         sphere(d = holderBarLength);
     }
     translate([0,holderBarLength/2,holderBarDiameter/2]) rotate([90, 0, 0]) cylinder(h=holderBarLength, d=holderBarDiameter);
 }
+
 module cone(l,r) {
+    zd = 0.01;
     translate([0,0,l]) rotate([180,0,0]) {
-        st=l/$fn;
+        st=l/curveSteps;
         for(i=[0:st:l]) {
+            dh = st + zd;
             translate([0, 0, i]) {
                 if(type=="Conic") {
                     r1 = coneF(i, r, l);
                     r2 = coneF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh, r1=r1, r2=r2 );
                 } else if(type=="Ogive") {
                     r1 = tangOgiveF(i, r, l);
                     r2 = tangOgiveF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh,r1=r1, r2=r2 );
                 } else if(type=="Elliptical") {
                     r1 = elliptF(i, r, l);
                     r2 = elliptF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh,r1=r1, r2=r2 );
                 } else if(type=="Parabolic") {
                     r1 = parabF(i, r, l);
                     r2 = parabF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh,r1=r1, r2=r2 );
                 } else if(type=="Power") {
                     r1 = powerF(i, r, l);
                     r2 = powerF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh,r1=r1, r2=r2 );
                 } else {
                     r1 = haackF(i, r, l);
                     r2 = haackF(i + st, r, l);
-                    cylinder(h = st,r1=r1, r2=r2 );
+                    cylinder(h = dh,r1=r1, r2=r2 );
                 }
             }
         }

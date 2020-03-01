@@ -1,5 +1,5 @@
 
-$fn=100;
+include <Settings.scad>
 
 length=13;
 diam=5.3;

@@ -1,12 +1,9 @@
 /// coments
 //params
+use <components/Fittings.scad>
+include <Settings.scad>
 
-$fn=100;
-tlrnc=0.1;
-overlap=15;
-fitterInternalDiameter=27;
-perimeter = 0.4;
-wallThicknes = 3* perimeter;
+fitterInternalDiameter=internalDiameter;
 motorStopperHeigh=5;
 n=2;
 finShape=[[0,7],[10,0],[40,0],[40,20],[40,30],[0,70]];
@@ -30,23 +27,17 @@ module MotorMount(motorDiameter = 20, motorLength=70, motorCount=1) {
     }
     manifold(motorLength, motorDiameter, motorCount);
     translate ([0, 0, 2*overlap + motorStopperHeigh + motorLength])
-        tubeConnector(overlap, fitterInternalDiameter, wallThicknes, tlrnc);
+        topFitting(overlap, fitterInternalDiameter, wallThicknes, tlrnc);
 }
 
 module fin(motorLength, motorDiameter) {
-  translate([0, wallThicknes/2, 0])
+    finThicknes = wallThicknes/2;
+    translate([0, finThicknes/2, 0])
         rotate([90,0,0])
-            linear_extrude(wallThicknes)
+            linear_extrude(finThicknes)
                 polygon(points=finShape);
 
 
-}
-
-module tubeConnector(overlap, fitterInternalDiameter, wallThicknes, tlrnc) {
-    difference() {
-        cylinder(h = overlap , d = fitterInternalDiameter + 2* wallThicknes);
-        cylinder(h = overlap+ tlrnc , d = fitterInternalDiameter + wallThicknes + tlrnc);
-    }
 }
 
 module manifold(motorLength, motorDiameter, motorCount) {
@@ -87,7 +78,7 @@ module motorMountOuterShell(motorLength, motorCount = 1, motorDiameter) {
                     }
         }
     }
-    
+
     finsPerMotor = floor(finCount/motorCount);
     echo(finsPerMotor);
     for(j = [0:motorCount-1]) {

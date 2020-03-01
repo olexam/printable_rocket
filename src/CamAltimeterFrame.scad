@@ -1,21 +1,15 @@
 use <Camera.scad>
-/// coments
-//params
+include <Settings.scad>
 
-$fn=100;
-tlrnc=0.1;
-overlap=15;
-internalDiameter=27 - 2*tlrnc;
-perimeter = 0.4;
-wallThicknes = 3* perimeter;
+//internalDiameter=internalDiameter - 2*tlrnc;
+
 length=100;
 camL=14;
 camW=18;
 
+CamAltimeterMount(length, internalDiameter - 2*tlrnc, wallThicknes, tlrnc);
 
-CamAltimeterMount();
-
-module CamAltimeterMount() {
+module CamAltimeterMount(length, internalDiameter, wallThicknes, tlrnc) {
     translate([-internalDiameter/2, -wallThicknes/2, 0 ]) {
         difference() {
             cube([internalDiameter, wallThicknes, length ]);
@@ -34,4 +28,3 @@ module holder() {
         cylinder(r=1, h=3 + tlrnc);
     }
 }
-    
