@@ -19,8 +19,8 @@ module tubeWithWhole() {
         outerTubeWithFitting(length, internalDiameter);
         translate([0,internalDiameter/2 - 3, length - 3 ]) rotate([-40, 0, 0]) #camera();
     }
-    translate([internalDiameter/2-wallThicknes, 0, 0]) slot(length, wallThicknes, tlrnc);
-    rotate([0,0,180]) translate([internalDiameter/2-wallThicknes, 0, 0]) slot(length, wallThicknes, tlrnc);
+    translate([internalDiameter/2 - wallThicknes, 0, overlap]) slot(length - overlap, wallThicknes, tlrnc);
+    rotate([0,0,180]) translate([internalDiameter/2-wallThicknes, 0, overlap]) slot(length - overlap, wallThicknes, tlrnc);
 }
 
 module outerTubeWithFitting(l, internalDiameter) {
