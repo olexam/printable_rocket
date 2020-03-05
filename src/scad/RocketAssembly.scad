@@ -14,8 +14,8 @@ holderBarLength = 3*internalDiameter/5;
 holderBarDiameter=5;
 
 MotorMount(20, 70, 2);
-translate([0,0,130]) TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc);
+translate([0,0,130]) rotate([0, 0, 180]) TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam);
 translate([0,0,180]) MainTube(tubeLength, internalDiameter, wallThicknes, overlap, tlrnc);
 translate([0,0,200+tubeLength]) tubeWithWhole();
-translate([0,0,350+tubeLength]) TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc);
+translate([0,0,350+tubeLength]) rotate([0, 0, 180]) TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam);
 translate([0,0,400+tubeLength]) NoseCone(72, internalDiameter);

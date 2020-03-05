@@ -3,15 +3,13 @@ include <Settings.scad>
 /// coments
 //params
 
-rodDiam=9;
-
 
 TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam);
 
-module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc=0.1, rodDiam=8) {
+module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam) {
     zd = 0.001; //size difference for improve quick rendering
     MainTube(2*overlap + 5, internalDiameter, wallThicknes, overlap, tlrnc);
-    translate([0, internalDiameter/2 + wallThicknes, overlap])
+    translate([0, (internalDiameter+rodDiam)/2+wallThicknes+perimeter, overlap])
         RodGuider(rodDiam, perimeter, tlrnc);
     translate([0, -(internalDiameter/2 + wallThicknes), overlap])
         leierHolder(overlap, internalDiameter, wallThicknes);
@@ -20,13 +18,11 @@ module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc=0.1, rodDiam=8)
 module RodGuider(rodDiam, perimeter, tlrnc) {
     zd = 0.001; //size difference for improve quick rendering
     h=rodDiam+3;
-    translate([0,rodDiam/2 + perimeter-tlrnc,0]) {
-        difference() {
-            cylinder(h=h, d=rodDiam + 3*perimeter);
-            translate([0,0,-zd]) 
-                cylinder(h=h+2*zd, d=rodDiam);
-            translate([-rodDiam,-rodDiam/2,0]) rotate([-45,0,0]) cube([2*rodDiam, rodDiam, 2*rodDiam]);
-        }
+    difference() {
+        cylinder(h=h, d=rodDiam + 3*perimeter);
+        translate([0,0,-zd]) 
+            cylinder(h=h+2*zd, d=rodDiam);
+        translate([-rodDiam,-rodDiam/2,0]) rotate([-45,0,0]) cube([2*rodDiam, rodDiam, 2*rodDiam]);
     }
 }
 

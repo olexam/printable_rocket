@@ -5,18 +5,21 @@ include <Settings.scad>
 
 fitterInternalDiameter=internalDiameter;
 motorStopperHeigh=5;
-n=2;
+motorCount=2;
 finShape=[[0,7],[10,0],[40,0],[40,20],[40,30],[0,70]];
 //finShape=[[0,7],[30,20],[30,40],[0,70]];
 finCount=4;
 finRotOffest=-45;
+finThicknes = perimeter*2;
+motorDiameter=20;
+motorLength=70;
 
 
-MotorMount(20, 70, n);
+MotorMount(motorDiameter, motorLength, motorCount, tlrnc);
 
 function radiusS(motorCount = 1) =  motorCount == 1 ? 0 : (fitterInternalDiameter+3*wallThicknes)/(2*sin(180/motorCount));
 
-module MotorMount(motorDiameter = 20, motorLength=70, motorCount=1) {
+module MotorMount(motorDiameter = 20, motorLength=70, motorCount=1, tlrnc=0.1) {
     difference () {
         motorMountOuterShell(motorLength, motorCount, motorDiameter);
         for(i = [0:motorCount-1]) {
@@ -30,8 +33,7 @@ module MotorMount(motorDiameter = 20, motorLength=70, motorCount=1) {
         topFitting(overlap, fitterInternalDiameter, wallThicknes, tlrnc);
 }
 
-module fin(motorLength, motorDiameter) {
-    finThicknes = wallThicknes/2;
+module fin(motorLength, motorDiameter, finThicknes) {
     translate([0, finThicknes/2, 0])
         rotate([90,0,0])
             linear_extrude(finThicknes)
@@ -87,7 +89,7 @@ module motorMountOuterShell(motorLength, motorCount = 1, motorDiameter) {
                 for(i = [0:finsPerMotor-1]) {
                     rotate([0,0,(360/motorCount)/finsPerMotor*i + finRotOffest])
                         translate([fitterInternalDiameter/2 + wallThicknes/2, 0, 0])
-                            fin(motorLength, motorDiameter);
+                            fin(motorLength, motorDiameter, finThicknes);
                 }
     }
 }

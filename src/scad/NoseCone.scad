@@ -55,7 +55,7 @@ module NoseCone(l, internalDiameter, noBar = false) {
 
 module holderBar(overlap, internalDiameter, wallThicknes,holderBarLength, holderBarDiameter, tlrnc=0.1) {
     difference() {
-        cylinder(h = overlap, d = internalDiameter);
+        cylinder(h = overlap, d = internalDiameter-2*wallThicknes);
         sphere(d = holderBarLength);
     }
     translate([0,holderBarLength/2,holderBarDiameter/2]) rotate([90, 0, 0]) cylinder(h=holderBarLength, d=holderBarDiameter);

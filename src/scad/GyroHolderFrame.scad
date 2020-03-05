@@ -1,11 +1,11 @@
-use <Camera.scad>
+use <components/Camera.scad>
 use <CamAltimeterMount.scad>
 include <Settings.scad>
 
 camL=14;
 camW=18;
 
-GyroHolder(internalDiameter - 2*tlrnc, wallThicknes, tlrnc);
+GyroHolder(internalDiameter - 4*tlrnc, frameThicknes, tlrnc);
 
 module GyroHolder(internalDiameter, wallThicknes, tlrnc) {
     zd = 0.001;
@@ -15,10 +15,10 @@ module GyroHolder(internalDiameter, wallThicknes, tlrnc) {
     }
     slotL = 3*wallThicknes;
     translate([0, internalDiameter/2 - slotL - 2*wallThicknes, -wallThicknes]) {
-        rotate([0,90,90]) slot(slotL, wallThicknes, tlrnc);  
+        rotate([0,90,90]) slot(slotL, wallThicknes, tlrnc);
     }
     translate([0, -internalDiameter/2 + 2*wallThicknes, -wallThicknes]) {
-        rotate([0,90,90]) slot(slotL, wallThicknes, tlrnc);  
+        rotate([0,90,90]) slot(slotL, wallThicknes, tlrnc);
     }
 
 }
