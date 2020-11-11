@@ -41,7 +41,7 @@ Tangent	2/3
 **/
 C=1/3;
 
-NoseCone(length, internalDiameter, true);
+NoseCone(length, internalDiameter, false);
 
 module NoseCone(l, internalDiameter, noBar = false) {
     translate([0,0,overlap])  {
@@ -53,9 +53,9 @@ module NoseCone(l, internalDiameter, noBar = false) {
     fitting(overlap, internalDiameter, wallThicknes, tlrnc);
 }
 
-module holderBar(overlap, internalDiameter, wallThicknes,holderBarLength, holderBarDiameter, tlrnc=0.1) {
+module holderBar(overlap, internalDiameter, wallThicknes, holderBarLength, holderBarDiameter, tlrnc=0.1) {
     difference() {
-        cylinder(h = overlap, d = internalDiameter-2*wallThicknes);
+        cylinder(h = overlap, d = internalDiameter);
         sphere(d = holderBarLength);
     }
     translate([0,holderBarLength/2,holderBarDiameter/2]) rotate([90, 0, 0]) cylinder(h=holderBarLength, d=holderBarDiameter);

@@ -11,12 +11,12 @@ length=100;
 holderBarLength = 3*internalDiameter/5;
 holderBarDiameter=5;
 
-tubeWithWhole();
+CamAltimeterTube();
 
-module tubeWithWhole() {
+module CamAltimeterTube() {
     difference() {
         outerTubeWithFitting(length, internalDiameter);
-        translate([0,internalDiameter/2 - 3, length - 3 ]) rotate([-40, 0, 0]) #camera();
+        translate([0,internalDiameter/2 - 3, length - 3 ]) rotate([-40, 0, 0]) camera();
     }
     translate([internalDiameter/2-frameThicknes, 0, overlap]) slot(length - overlap, frameThicknes, tlrnc);
     rotate([0,0,180]) translate([internalDiameter/2-frameThicknes, 0, overlap]) slot(length - overlap, frameThicknes, tlrnc);
