@@ -6,3 +6,7 @@
 *.FCStd?
 *.gcode
 *.zip
+.vscode/extensions.json
+.clang_complete
+.gcc-flags.json
+.travis.yml

@@ -14,7 +14,7 @@ tubeLength=180;
 // holderBarLength = 3*internalDiameter/5;
 // holderBarDiameter=5;
 
-motorCount=1;
+// motorCount=1;
 
 translate([0,0,400+tubeLength]) NoseCone(72, internalDiameter);
 translate([0,0,250+tubeLength]) rotate([0, 0, 180]) CamAltimeterTube();
