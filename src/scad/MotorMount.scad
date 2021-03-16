@@ -47,7 +47,7 @@ module MotorMount(motorDiameter, motorLength, motorCount, overlap, internalDiame
     topFitting(overlap, internalDiameter, wallThickness, tlrnc);
 }
 
-module manifold(motorDiameter, motorCount, internalDiameter, morotHolderOutDiameter, wallThickness, manifolWall, overlap){
+module manifold(motorDiameter, motorCount, internalDiameter, morotHolderOutDiameter, wallThickness, manifoldWall, overlap){
     outerDiameter = outerDiam(internalDiameter, wallThickness);
     dz=0.01;
   difference(){
@@ -61,11 +61,11 @@ module manifold(motorDiameter, motorCount, internalDiameter, morotHolderOutDiame
     }
     hull(){ // inner shell
       translate([0, 0, dz])
-        linear_extrude(0.01) circle(d = internalDiameter - manifolWall );
+        linear_extrude(0.01) circle(d = internalDiameter - manifoldWall );
       for(i = [0:motorCount - 1]){
         rotate([0, 0, 360 / motorCount * i])
           translate([radiusS(motorCount, motorDiameter), 0, -2 * (overlap + dz)])
-          linear_extrude(0.01)circle(d = morotHolderOutDiameter - manifolWall );
+          linear_extrude(0.01)circle(d = morotHolderOutDiameter - manifoldWall );
       }
     }
   }

@@ -5,11 +5,9 @@ $fn=$preview ? 72 : 256;
 ///General config
 tlrnc=0.1;
 
-dz = 0.01; /// size difference for improve quick rendering
-
-perimeter=0.45;
+perimeter=0.5;
 overlap=15;
-wallThicknes=perimeter*3;
+wallThicknes=perimeter*2;
 internalDiameter=35;
 minPerimeters=2;
 frameThicknes=1.2;
