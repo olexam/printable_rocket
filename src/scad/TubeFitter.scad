@@ -1,12 +1,17 @@
 use <MainTube.scad>
-include <Settings.scad>
+// include <Settings.scad>
 /// coments
 //params
+rodDiam = 5;
+tlrnc=0.1;
+overlap=15;
+wallThicknes=0.45;
+internalDiameter=50;
+perimeter=0.45;
 
+TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam, perimeter);
 
-TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam);
-
-module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam) {
+module TubeFitter(internalDiameter, wallThicknes, overlap, tlrnc, rodDiam, perimeter) {
     zd = 0.001; //size difference for improve quick rendering
     MainTube(2*overlap + 5, internalDiameter, wallThicknes, overlap, tlrnc);
     translate([0, (internalDiameter+rodDiam)/2+wallThicknes+perimeter, overlap])

@@ -1,118 +1,106 @@
 use <components/Fittings.scad>
-include <Settings.scad>
+use <components/functions.scad>
+use <MotorSaferRing.scad>
+// include <Settings.scad>
 
-fitterInternalDiameter=motorDiameter+3*wallThicknes;
+fnSp=[[0,7],[10,0],[40,0],[40,20],[40,30],[0,70]];
 
+MotorMount(20, 70, 3, 15, 55, 0.45, 3, 5, 1, fnSp, 0, 0.1);
 
-MotorMount(motorDiameter, motorLength, motorCount, tlrnc);
+// =====================
 
-function radiusS(motorCount = 1, fitterInternalDiameter = fitterInternalDiameter, wallThicknes = wallThicknes) = 
+// finsConunt must be bigger or equal to motorCount
+module MotorMount(motorDiameter, motorLength, motorCount, overlap, internalDiameter, wallThickness, finCount, motorStopperHeigh, finThicknes, finShape, finRotOffest, tlrnc){
+    motorHolderThck = 1.5;
+    motorHolderInnerDiameter = motorDiameter + 8 * tlrnc;
+    morotHolderOutDiameter = motorHolderInnerDiameter + 2 * motorHolderThck;
+
+  difference(){
+    motorMountOuterShell(motorLength, motorCount, motorDiameter, morotHolderOutDiameter, motorStopperHeigh);
+    for(i = [0:motorCount - 1]){
+      rotate([0, 0, 360 / motorCount * i])
+        translate([radiusS(motorCount, motorDiameter), 0, 0])
+          motorMountInternalCut(motorLength, motorDiameter, motorCount, motorStopperHeigh, tlrnc);
+    }
+  }
+  for(i = [0:motorCount - 1]){
+    rotate([0, 0, 360 / motorCount * i])
+      translate([radiusS(motorCount, motorDiameter), 0, 0])
+      motorSaferRing(motorDiameter, morotHolderOutDiameter, tlrnc);
+  }
+
+  finsPerMotor = floor(finCount / motorCount);
+  for(j = [0:motorCount - 1]){
+    rotate([0, 0, 360 / motorCount * j])
+      translate([radiusS(motorCount, motorDiameter), 0, 0])
+      for(i = [0: finsPerMotor - 1]){
+        finAngle = 360 / motorCount / finsPerMotor * i + finRotOffest;
+        rotate([0, 0, finAngle])
+          translate([morotHolderOutDiameter / 2, 0, 0])
+          fin(motorLength, finThicknes, finShape);
+      }
+  }
+
+  translate([0, 0, 2 * overlap + motorStopperHeigh + motorLength])
+    manifold(motorDiameter, motorCount, internalDiameter, morotHolderOutDiameter, wallThickness, motorHolderThck, overlap);
+  translate([0, 0, 2 * overlap + motorStopperHeigh + motorLength])
+    topFitting(overlap, internalDiameter, wallThickness, tlrnc);
+}
+
+module manifold(motorDiameter, motorCount, internalDiameter, morotHolderOutDiameter, wallThickness, manifolWall, overlap){
+    outerDiameter = outerDiam(internalDiameter, wallThickness);
+    dz=0.01;
+  difference(){
+    hull(){ // outer shell
+      linear_extrude(0.01) circle(d = outerDiameter);
+      for(i = [0:motorCount - 1]){
+        rotate([0, 0, 360 / motorCount * i])
+          translate([radiusS(motorCount, motorDiameter), 0, -2 * (overlap)])
+          linear_extrude(0.01)circle(d = morotHolderOutDiameter);
+      }
+    }
+    hull(){ // inner shell
+      translate([0, 0, dz])
+        linear_extrude(0.01) circle(d = internalDiameter - manifolWall );
+      for(i = [0:motorCount - 1]){
+        rotate([0, 0, 360 / motorCount * i])
+          translate([radiusS(motorCount, motorDiameter), 0, -2 * (overlap + dz)])
+          linear_extrude(0.01)circle(d = morotHolderOutDiameter - manifolWall );
+      }
+    }
+  }
+}
+
+module motorMountOuterShell(motorLength, motorCount, motorDiameter, morotHolderOutDiameter, motorStopperHeigh){
+  hull(){
+    for(i = [0:motorCount - 1]){
+      rotate([0, 0, 360 / motorCount * i])
+        translate([radiusS(motorCount, motorDiameter), 0, 0])
+        translate([0, 0, 7]){
+          cylinder(h = motorStopperHeigh + motorLength - 7, d = morotHolderOutDiameter);
+        }
+    }
+  }
+}
+
+module fin(motorLength,finThicknes, finShape){
+    translate([0, finThicknes / 2, 0])
+      rotate([90, 0, 0])
+      linear_extrude(finThicknes)
+      polygon(points = finShape);
+}
+  
+module motorMountInternalCut(motorLength, motorDiameter, motorCount, motorStopperHeigh, tlrnc){
+    dz=0.01;
+  translate([0, 0, -dz]) cylinder(h = motorLength + 3 * tlrnc + dz, d = motorDiameter + 8 * tlrnc);
+  translate([0, 0, motorLength + 2 * tlrnc]){
+    cylinder(h = motorStopperHeigh, d = motorDiameter - 2);
+  }
+}
+
+// 12 is max diam of safer knob related to motor diameter (+10) plus clearance
+function radiusS(motorCount, motorDiameter) =
     motorCount == 1 
-        ? 0 
-        : (fitterInternalDiameter+3*wallThicknes)/(2*sin(180/motorCount));
+    ? 0
+    :(motorDiameter + 12) / (2 * sin(180 / motorCount));
 
-module MotorMount(motorDiameter = 20, motorLength=70, motorCount=1, tlrnc=0.1) {
-    difference () {
-        motorMountOuterShell(motorLength, motorCount, motorDiameter);
-        for(i = [0:motorCount-1]) {
-            rotate([0,0,360/motorCount*i])
-                translate([radiusS(motorCount), 0, 0])
-                    motorMountInternalCut(motorLength, motorDiameter, motorCount);
-        }
-    }
-    translate ([0, 0, 2*overlap + motorStopperHeigh + motorLength])
-        manifold(motorDiameter, motorCount);
-    translate ([0, 0, 2*overlap + motorStopperHeigh + motorLength])
-        topFitting(overlap, internalDiameter, wallThicknes, tlrnc);
-}
-
-module fin(motorLength, motorDiameter, finThicknes) {
-    translate([0, finThicknes/2, 0])
-        rotate([90,0,0])
-            linear_extrude(finThicknes)
-                polygon(points=finShape);
-
-
-}
-
-module manifold(motorDiameter, motorCount) {
-    difference(){
-        hull() { // outer shell
-            linear_extrude (0.01) circle(d = outerDiameter);
-            for(i = [0:motorCount-1]) {
-                rotate([0,0,360/motorCount*i])
-                    translate([radiusS(motorCount), 0, -2*(overlap)])
-                        linear_extrude (0.01) circle(d = fitterInternalDiameter + 2 * wallThicknes);
-            }
-        }
-        hull() { // inner shell
-            translate([0,0,dz])
-                linear_extrude (0.01) circle(d = internalDiameter);
-            for(i = [0:motorCount-1]) {
-                rotate([0,0,360/motorCount*i])
-                    translate([radiusS(motorCount), 0, -2*(overlap+dz)])
-                        linear_extrude (0.01) circle(d = fitterInternalDiameter);
-            }
-        }
-    }
-}
-
-module motorMountOuterShell(motorLength, motorCount = 1, motorDiameter) {
-    for(i = [0:motorCount-1]) {
-        rotate([0,0,360/motorCount*i])
-        translate([radiusS(motorCount), 0, 0])
-            motorSaferRing();
-    }
-    hull() {
-        for(i = [0:motorCount-1]) {
-            rotate([0,0,360/motorCount*i])
-                translate([radiusS(motorCount), 0, 0])
-                    translate([0,0,7]) {
-                        cylinder(h=motorStopperHeigh + motorLength - 7, d=fitterInternalDiameter + 2 * wallThicknes );
-                    }
-        }
-    }
-
-    finsPerMotor = floor(finCount/motorCount);
-    echo(finsPerMotor);
-    for(j = [0:motorCount-1]) {
-        rotate([0,0,360/motorCount*j])
-            translate([radiusS(motorCount), 0, 0])
-                for(i = [0:finsPerMotor-1]) {
-                    rotate([0,0,(360/motorCount)/finsPerMotor*i + finRotOffest])
-                        translate([fitterInternalDiameter/2 + wallThicknes/2, 0, 0])
-                            fin(motorLength, motorDiameter, finThicknes);
-                }
-    }
-}
-
-module motorSaferRing() {
-    difference() {
-        union() {
-            cylinder(h = 0.4, d = 13.6 * 2 );
-            translate([0,0,0.4]) {
-                cylinder(h=1.6, r1=13.6, r2=12);
-            }
-        }
-        rotate_extrude(angle=90, convexity=10) {
-            translate([12, -dz, 0]) square(size=2+dz);
-        }
-        rotate_extrude(angle=90, convexity=10) {
-            translate([-14, -dz, 0]) square(size=2+dz);
-        }
-    }
-    translate([0,0,2]) {
-        cylinder(h=3, d=24);
-    }
-    translate([0,0,5]) {
-        cylinder(h=2, r1=12, r2=fitterInternalDiameter/ 2 + wallThicknes);
-    }
-}
-
-
-module motorMountInternalCut(motorLength, motorDiameter, motorCount = 1) {
-    translate([0,0,-dz]) cylinder(h = motorLength + 3*tlrnc + dz, d = motorDiameter + 8*tlrnc);
-    translate ([0, 0, motorLength + 2* tlrnc]) {
-        cylinder(h = motorStopperHeigh , d = motorDiameter - 2);
-    }
-}

@@ -1,17 +1,18 @@
 use <components/Fittings.scad>
 /// coments
 //params
-include <Settings.scad>
+// include <Settings.scad>
 
+wallThicknes=0.45*1;
+internalDiameter=55;
+overlap=15;
+tubeLength=100;
+tlrnc = 0.1;
 
-length=200;
+MainTube(tubeLength, internalDiameter, wallThicknes, overlap, tlrnc);
 
-MainTube(length, internalDiameter, wallThicknes, overlap, tlrnc);
-
-module MainTube(length, internalDiameter, wallThicknes, overlap, tlrnc) {
-    zd = 0.001; //size difference for improve quick rendering
-
-    translate([0, 0, length - overlap]) topFitting(overlap, internalDiameter, wallThicknes, tlrnc);
-    translate([0,0, overlap]) tube(length - 2* overlap, internalDiameter, wallThicknes);
-    fitting(overlap, internalDiameter, wallThicknes, tlrnc);
+module MainTube(length, intDiameter, wThickness, ovrlp, tlrnc) {
+    translate([0, 0, length - ovrlp]) topFitting(ovrlp, intDiameter, wThickness, tlrnc);
+    translate([0,0, ovrlp]) tube(length - 2* ovrlp, intDiameter, wThickness);
+    fitting(ovrlp, intDiameter, wThickness, tlrnc);
 }
