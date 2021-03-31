@@ -3,16 +3,19 @@ use <functions.scad>
 
 // debug object
 union() {
-    wallThicknes=0.45*1;
+    w=2;
     internalDiameter=50;
     overlap=15;
-    
+    perimeter=2;    
     $fn=150;
-    tlrnc = 0.1;
-    w=wallThicknes;
-    translate ([0,0, 10]) 
-        fitting(overlap, internalDiameter, w, tlrnc);
-    topFitting(overlap, internalDiameter, w, tlrnc);
+    tlrnc = 0.5;
+
+    tOver=10;
+
+    topFitting(overlap, internalDiameter, w, perimeter, tlrnc);
+    translate ([0,0, tOver]) fitting(overlap, internalDiameter, w, perimeter, tlrnc);
+    translate ([0,0, -overlap/2]) color([0/255, 128/255, 0/255]) tube(overlap/2, internalDiameter, w);
+    translate ([0,0, tOver + overlap]) color([0/255, 128/255, 0/255]) tube(overlap/2, internalDiameter, w);
 }
 
 
@@ -26,27 +29,31 @@ module interFit(dOut, intDiam) {
                 square(sqSize, true);
 }
 
-module topFitting(ovrlp, intDiam, wlThckns, tlrnc=0.1) {
-    interFitDiam = intDiam + wlThckns + 2*tlrnc;
+module topFitting(ovrlp, intDiam, wlThckns, minWall, tlrnc) {
+    axDiam = intDiam + wlThckns;
+    interFitDiam = axDiam + tlrnc;
     dOut = outerDiam(intDiam, wlThckns);
-    fitterWall = (dOut - interFitDiam)/2;
+    fitterWall = (dOut - interFitDiam)/2 < minWall ? minWall : (dOut - interFitDiam)/2;
     tube(ovrlp, interFitDiam, fitterWall);
-    interFit(dOut, intDiam);
+    interFit(interFitDiam + fitterWall * 2, intDiam);
 }
 
-module fitting(ovrlp, intDiam, wlThckns, tlrnc=0.1) {
-    interFitDiam = intDiam + wlThckns - 2*tlrnc;
-    fitterWall = (interFitDiam - intDiam)/2;
-    tube(ovrlp, intDiam, fitterWall);
+module fitting(ovrlp, intDiam, wlThckns, minWall, tlrnc) {
+    axDiam = intDiam + wlThckns;
+    interFitDiam = axDiam - tlrnc;
+
+    fitterWall = (interFitDiam - intDiam)/2 < minWall ? minWall : (interFitDiam - intDiam)/2;
+    fitInDiam = interFitDiam - fitterWall*2;
+    tube(ovrlp, fitInDiam, fitterWall);
     dOut = outerDiam(intDiam, wlThckns);
     translate([0,0,ovrlp]) 
-        interFit(dOut, intDiam);
+        interFit(dOut, fitInDiam);
 }
 
 module tube(length, intDiam, wlThckns) {
-    dz = 0.01; /// size difference for improve quick rendering
+    dz = 0.1; /// size difference for improve quick rendering
     difference() {
-        cylinder(h=length, d=intDiam + 2*wlThckns);
+        cylinder(h=length, d=intDiam + 2 * wlThckns);
         translate([0,0,-dz]) cylinder(h=length + 2*dz, d=intDiam);
     }
 }

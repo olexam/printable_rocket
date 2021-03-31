@@ -4,27 +4,28 @@ use <components/Fittings.scad>
 //params
 // include <Settings.scad>
 
-internalDiameter=55;
-length=72;
-holderBarLength = 3*internalDiameter/5;
-holderBarDiameter=5;
-overlap=15;
-wallThicknes = 0.45;
-tlrnc=0.1;
-noBar=false;
+// internalDiameter=55;
+// length=72;
+// holderBarLength = 3*internalDiameter/5;
+// holderBarDiameter=5;
+// overlap=15;
+// wallThicknes = 0.45;
+// tlrnc=0.1;
+// noBar=false;
+// minWall=0.45;
 
-type=""; //"Power";//"Parabolic";//"Conic";//"Elliptical";//"Ogive";
+// type=""; //"Power";//"Parabolic";//"Conic";//"Elliptical";//"Ogive";
 
-NoseCone(length, internalDiameter, noBar, overlap, wallThicknes, holderBarLength, holderBarDiameter, tlrnc, type);
+NoseCone(length, internalDiameter, noBar, overlap, wallThicknes, minWall, holderBarLength, holderBarDiameter, tlrnc, type);
 
-module NoseCone(l, internalDiameter, noBar, overlap, wallThicknes, holderBarLength, holderBarDiameter, tlrnc, type = "") {
+module NoseCone(l, internalDiameter, noBar, overlap, wallThicknes, minWall, holderBarLength, holderBarDiameter, tlrnc, type = "") {
     translate([0,0,overlap])  {
         cone(l, (internalDiameter+2*wallThicknes)/2, type);
     }
     if (!noBar) {
         holderBar(overlap, internalDiameter, wallThicknes, holderBarLength, holderBarDiameter, tlrnc);
     }
-    fitting(overlap, internalDiameter, wallThicknes, tlrnc);
+    fitting(overlap, internalDiameter, wallThicknes, minWall, tlrnc);
 }
 
 module holderBar(overlap, internalDiameter, wallThicknes, holderBarLength, holderBarDiameter, tlrnc=0.1) {
